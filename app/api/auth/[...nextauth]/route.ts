@@ -34,9 +34,25 @@ const handler = NextAuth({
 
           return user
         }
+
+        return null
       },
     }),
   ],
+  callbacks: {
+    async session({ session }) {
+      if (session.user) {
+        const mongodbUser = await User.findOne({ email: session.user.email })
+        session.user.id = mongodbUser._id.toString()
+
+        session.user = { ...session.user, ...mongodbUser._doc }
+
+        return session
+      }
+      return session
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 })
 
 export { handler as GET, handler as POST }

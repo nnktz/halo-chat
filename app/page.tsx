@@ -1,5 +1,7 @@
+import { redirect } from 'next/navigation'
+
 const HomePage = () => {
-  return <main>home page</main>
+  return redirect('/chats')
 }
 
-export default HomePage;
+export default HomePage

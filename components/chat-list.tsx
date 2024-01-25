@@ -1,13 +1,12 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { Loader } from './loader'
 import { ChatBox } from './chat-box'
 
-export const ChatList = () => {
+export const ChatList = ({ currentChatId }: { currentChatId?: string }) => {
   const { data: session } = useSession()
 
   const currenUser = session?.user
@@ -15,10 +14,6 @@ export const ChatList = () => {
   const [loading, setLoading] = useState(true)
   const [chats, setChats] = useState<any[]>([])
   const [search, setSearch] = useState('')
-
-  if (!currenUser) {
-    redirect('/login')
-  }
 
   useEffect(() => {
     const getChats = async () => {
@@ -59,7 +54,14 @@ export const ChatList = () => {
 
       <div className="chats">
         {chats.length > 0 &&
-          chats.map((chat, index) => <ChatBox key={index} chat={chat} currentUser={currenUser} />)}
+          chats.map((chat, index) => (
+            <ChatBox
+              key={index}
+              chat={chat}
+              currentUser={currenUser}
+              currentChatId={currentChatId}
+            />
+          ))}
 
         {chats.length === 0 && (
           <p className="text-center text-base-bold text-black">No chats found</p>

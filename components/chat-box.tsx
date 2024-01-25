@@ -7,18 +7,22 @@ import { useRouter } from 'next/navigation'
 
 type ChatBoxProps = {
   chat: any
-  currentUser: CustomSession
+  currentUser?: CustomSession
+  currentChatId?: string
 }
 
-export const ChatBox = ({ chat, currentUser }: ChatBoxProps) => {
+export const ChatBox = ({ chat, currentUser, currentChatId }: ChatBoxProps) => {
   const router = useRouter()
 
-  const otherMembers = chat?.members?.filter((member: any) => member._id !== currentUser.id)
+  const otherMembers = chat?.members?.filter((member: any) => member._id !== currentUser?.id)
 
   const lastMessage = chat?.messages?.length > 0 && chat?.messages[chat?.messages.length - 1]
 
   return (
-    <div className="chat-box" onClick={() => router.push(`/chats/${chat._id}`)}>
+    <div
+      className={`chat-box ${chat._id === currentChatId && 'bg-blue-2'}`}
+      onClick={() => router.push(`/chats/${chat._id}`)}
+    >
       <div className="chat-info text-black">
         {chat?.isGroup ? (
           <Image

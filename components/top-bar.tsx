@@ -4,13 +4,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Logout } from '@mui/icons-material'
 import { signOut, useSession } from 'next-auth/react'
-import { usePathname } from 'next/navigation'
+import { redirect, usePathname, useRouter } from 'next/navigation'
 
 export const TopBar = () => {
   const pathname = usePathname()
+  const router = useRouter()
   const { data: session } = useSession()
 
   const user = session?.user
+
+  if (user === null) {
+    return redirect('/login')
+  }
 
   const chatsHref = '/chats'
   const contactsHref = '/contacts'
@@ -51,11 +56,13 @@ export const TopBar = () => {
         </div>
 
         <Image
+          role="button"
           src={user?.profileImage || '/assets/images/person.jpg'}
           alt="user image"
           height={44}
           width={44}
           className="profile-photo"
+          onClick={() => router.push('/profile')}
         />
       </div>
     </div>

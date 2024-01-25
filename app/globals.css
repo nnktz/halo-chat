@@ -68,7 +68,7 @@ body {
 
 /* Main container */
 .main-container {
-  @apply flex h-screen justify-between gap-5 px-10 py-3 max-lg:gap-8;
+  @apply flex justify-between gap-5 px-10 py-3 max-lg:gap-8;
 }
 
 /* Top bar */
@@ -132,7 +132,7 @@ body {
 }
 
 /* Contacts */
-.create0-chat-container {
+.create-chat-container {
   @apply flex flex-col gap-5;
 }
 
@@ -141,7 +141,7 @@ body {
 }
 
 .contact-list {
-  @apply mb-20 flex h-screen w-1/2 flex-col gap-5 rounded-3xl bg-white px-8 py-5 max-lg:w-full;
+  @apply mb-20 flex h-full w-1/2 flex-col gap-5 rounded-3xl bg-white px-8 py-5 max-lg:w-full;
 }
 
 .contact {

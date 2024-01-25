@@ -65,7 +65,7 @@ const config: Config = {
         },
       ],
       'base-light': [
-        '20px',
+        '16px',
         {
           lineHeight: '140%',
           fontWeight: '400',

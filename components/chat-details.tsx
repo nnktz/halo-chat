@@ -5,8 +5,11 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { AddPhotoAlternate } from '@mui/icons-material'
+import toast from 'react-hot-toast'
 
 import { Loader } from './loader'
+import { CldUploadButton, CldUploadWidgetResults } from 'next-cloudinary'
+import { MessageBox } from './message-box'
 
 export const ChatDetails = ({
   chatId,
@@ -19,6 +22,7 @@ export const ChatDetails = ({
   const [chat, setChat] = useState<any>({})
   const [otherMembers, setOtherMembers] = useState<any[]>([])
   const [text, setText] = useState('')
+  const [isSending, setIsSending] = useState(false)
 
   useEffect(() => {
     const getChatDetails = async () => {
@@ -47,6 +51,52 @@ export const ChatDetails = ({
       getChatDetails()
     }
   }, [chatId, currentUser])
+
+  const sendText = async () => {
+    if (text.trim() === '') {
+      return toast('Please enter a text!')
+    }
+
+    setIsSending(true)
+
+    try {
+      const res = await fetch(`/api/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chatId, currentUserId: currentUser?.id, text: text.trim() }),
+      }).finally(() => setIsSending(false))
+
+      if (res.ok) {
+        setText('')
+      }
+    } catch (error) {
+      toast.error('Something went wrong. Please try again!')
+    }
+  }
+
+  const sendPhoto = async (result: CldUploadWidgetResults) => {
+    let photoUrl
+
+    if (typeof result?.info === 'object' && result.info !== null) {
+      photoUrl = result.info.secure_url
+
+      try {
+        const res = await fetch(`/api/messages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ chatId, currentUserId: currentUser?.id, photo: photoUrl }),
+        })
+      } catch (error) {
+        toast.error('Something went wrong. Please try again!')
+      }
+    } else {
+      toast.error('Something went wrong!')
+    }
+  }
 
   if (loading) {
     return <Loader />
@@ -92,18 +142,24 @@ export const ChatDetails = ({
         )}
       </div>
 
-      <div className="chat-body"></div>
+      <div className="chat-body">
+        {chat?.messages?.map((message: any, index: number) => (
+          <MessageBox key={index} message={message} currentUser={currentUser} />
+        ))}
+      </div>
 
       <div className="send-message">
         <div className="prepare-message">
-          <AddPhotoAlternate
-            sx={{
-              fontSize: '35px',
-              color: '#737373',
-              cursor: 'pointer',
-              '&:hover': { color: 'red' },
-            }}
-          />
+          <CldUploadButton options={{ maxFiles: 1 }} onUpload={sendPhoto} uploadPreset="tou93xzt">
+            <AddPhotoAlternate
+              sx={{
+                fontSize: '35px',
+                color: '#737373',
+                cursor: 'pointer',
+                '&:hover': { color: 'red' },
+              }}
+            />
+          </CldUploadButton>
 
           <input
             type="text"
@@ -111,11 +167,17 @@ export const ChatDetails = ({
             value={text}
             onChange={(e) => setText(e.target.value)}
             required
+            disabled={isSending}
             className="input-field !w-full"
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                sendText()
+              }
+            }}
           />
         </div>
 
-        <div className="ml-4">
+        <div role="button" aria-disabled={isSending} className="ml-4" onClick={sendText}>
           <Image
             src={'/assets/images/send.jpg'}
             alt="send image"

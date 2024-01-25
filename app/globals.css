@@ -193,7 +193,7 @@ body {
 }
 
 .message-photo {
-  @apply w-fit rounded-lg bg-white p-3 text-base-medium;
+  @apply rounded-lg bg-white p-3 text-base-medium;
 }
 
 .message-text-sender {

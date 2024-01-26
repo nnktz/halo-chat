@@ -95,7 +95,7 @@ const ProfilePage = () => {
             placeholder="Username"
             className="input-field"
             {...register('username', {
-              required: true,
+              required: 'Username is required',
               validate: (value) => {
                 if (value.length < 3) {
                   return 'Username must be at least 3 characters'
@@ -118,7 +118,7 @@ const ProfilePage = () => {
             alt="user image"
             width={160}
             height={160}
-            className="h-[160px] rounded-full"
+            className="h-40 rounded-full"
           />
 
           <CldUploadButton options={{ maxFiles: 1 }} onUpload={onUpload} uploadPreset="tou93xzt">

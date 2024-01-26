@@ -1,14 +1,16 @@
 'use client'
 
-import { CustomSession } from '@/types/next-auth'
-import { useEffect, useState } from 'react'
+import { type CustomSession } from '@/types/next-auth'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { AddPhotoAlternate } from '@mui/icons-material'
 import toast from 'react-hot-toast'
+import { CldUploadButton, type CldUploadWidgetResults } from 'next-cloudinary'
+
+import { pusherClient } from '@/lib/pusher'
 
 import { Loader } from './loader'
-import { CldUploadButton, CldUploadWidgetResults } from 'next-cloudinary'
 import { MessageBox } from './message-box'
 
 export const ChatDetails = ({
@@ -98,6 +100,34 @@ export const ChatDetails = ({
     }
   }
 
+  useEffect(() => {
+    pusherClient.subscribe(chatId)
+
+    const handleMessage = async (newMessage: any) => {
+      setChat((prevChat: any) => {
+        return {
+          ...prevChat,
+          messages: [...prevChat.messages, newMessage],
+        }
+      })
+    }
+
+    pusherClient.bind('new-message', handleMessage)
+
+    return () => {
+      pusherClient.unsubscribe(chatId)
+      pusherClient.unbind('new-message', handleMessage)
+    }
+  }, [chatId])
+
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }, [chat?.messages])
+
   if (loading) {
     return <Loader />
   }
@@ -146,6 +176,7 @@ export const ChatDetails = ({
         {chat?.messages?.map((message: any, index: number) => (
           <MessageBox key={index} message={message} currentUser={currentUser} />
         ))}
+        <div ref={bottomRef} />
       </div>
 
       <div className="send-message">

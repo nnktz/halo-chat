@@ -3,6 +3,8 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
+import { pusherClient } from '@/lib/pusher'
+
 import { Loader } from './loader'
 import { ChatBox } from './chat-box'
 
@@ -37,6 +39,39 @@ export const ChatList = ({ currentChatId }: { currentChatId?: string }) => {
       getChats()
     }
   }, [currenUser, search])
+
+  useEffect(() => {
+    if (currenUser) {
+      pusherClient.subscribe(currenUser.id)
+
+      const handleChatUpdate = async (updatedChat: any) => {
+        setChats((allChats) =>
+          allChats.map((chat) => {
+            if (chat._id === updatedChat.id) {
+              return { ...chat, messages: updatedChat.messages }
+            } else {
+              return chat
+            }
+          }),
+        )
+      }
+
+      const handleNewChat = async (newChat: any) => {
+        setChats((allChats) => [...allChats, newChat])
+      }
+
+      pusherClient.bind('update-chat', handleChatUpdate)
+      pusherClient.bind('new-chat', handleNewChat)
+
+      return () => {
+        pusherClient.unsubscribe(currenUser.id)
+        pusherClient.unbind('update-chat', handleChatUpdate)
+        pusherClient.unbind('new-chat', handleNewChat)
+      }
+    }
+  }, [currenUser])
+
+  console.log(chats)
 
   if (loading) {
     return <Loader />

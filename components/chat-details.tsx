@@ -133,89 +133,91 @@ export const ChatDetails = ({
   }
 
   return (
-    <div className="chat-details text-black">
-      <div className="chat-header">
-        {chat?.isGroup ? (
-          <>
-            <Link href={`/chats/${chatId}/group-info`}>
+    <div className="pb-20">
+      <div className="chat-details text-black">
+        <div className="chat-header">
+          {chat?.isGroup ? (
+            <>
+              <Link href={`/chats/${chatId}/group-info`}>
+                <Image
+                  src={chat?.groupPhoto || '/assets/images/group.png'}
+                  alt="group image"
+                  height={44}
+                  width={44}
+                  className="profile-photo"
+                />
+              </Link>
+
+              <div className="text">
+                <p>
+                  {chat?.name} &#160; &#183; &#160; {chat?.members?.length} members
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
               <Image
-                src={chat?.groupPhoto || '/assets/images/group.png'}
-                alt="group image"
+                src={otherMembers[0]?.profileImage || '/assets/images/person.jpg'}
+                alt="user image"
                 height={44}
                 width={44}
                 className="profile-photo"
               />
-            </Link>
 
-            <div className="text">
-              <p>
-                {chat?.name} &#160; &#183; &#160; {chat?.members?.length} members
-              </p>
-            </div>
-          </>
-        ) : (
-          <>
-            <Image
-              src={otherMembers[0]?.profileImage || '/assets/images/person.jpg'}
-              alt="user image"
-              height={44}
-              width={44}
-              className="profile-photo"
-            />
-
-            <div className="text">
-              <p>
-                {otherMembers[0]?.username} &#160; &#183; &#160; {chat?.members?.length} members
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className="chat-body">
-        {chat?.messages?.map((message: any, index: number) => (
-          <MessageBox key={index} message={message} currentUser={currentUser} />
-        ))}
-        <div ref={bottomRef} />
-      </div>
-
-      <div className="send-message">
-        <div className="prepare-message">
-          <CldUploadButton options={{ maxFiles: 1 }} onUpload={sendPhoto} uploadPreset="tou93xzt">
-            <AddPhotoAlternate
-              sx={{
-                fontSize: '35px',
-                color: '#737373',
-                cursor: 'pointer',
-                '&:hover': { color: 'red' },
-              }}
-            />
-          </CldUploadButton>
-
-          <input
-            type="text"
-            placeholder="Write a message"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            required
-            disabled={isSending}
-            className="input-field !w-full"
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                sendText()
-              }
-            }}
-          />
+              <div className="text">
+                <p>
+                  {otherMembers[0]?.username} &#160; &#183; &#160; {chat?.members?.length} members
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
-        <div role="button" aria-disabled={isSending} className="ml-4" onClick={sendText}>
-          <Image
-            src={'/assets/images/send.jpg'}
-            alt="send image"
-            height={40}
-            width={40}
-            className="send-icon"
-          />
+        <div className="chat-body">
+          {chat?.messages?.map((message: any, index: number) => (
+            <MessageBox key={index} message={message} currentUser={currentUser} />
+          ))}
+          <div ref={bottomRef} />
+        </div>
+
+        <div className="send-message">
+          <div className="prepare-message">
+            <CldUploadButton options={{ maxFiles: 1 }} onUpload={sendPhoto} uploadPreset="tou93xzt">
+              <AddPhotoAlternate
+                sx={{
+                  fontSize: '35px',
+                  color: '#737373',
+                  cursor: 'pointer',
+                  '&:hover': { color: 'red' },
+                }}
+              />
+            </CldUploadButton>
+
+            <input
+              type="text"
+              placeholder="Write a message"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              required
+              disabled={isSending}
+              className="input-field !w-full"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  sendText()
+                }
+              }}
+            />
+          </div>
+
+          <div role="button" aria-disabled={isSending} className="ml-4" onClick={sendText}>
+            <Image
+              src={'/assets/images/send.jpg'}
+              alt="send image"
+              height={40}
+              width={40}
+              className="send-icon"
+            />
+          </div>
         </div>
       </div>
     </div>

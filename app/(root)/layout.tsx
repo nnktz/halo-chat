@@ -1,3 +1,4 @@
+import { BottomBar } from '@/components/bottom-bar'
 import { TopBar } from '@/components/top-bar'
 
 const Layout = ({
@@ -9,6 +10,7 @@ const Layout = ({
     <div className="min-h-screen bg-blue-2">
       <TopBar />
       {children}
+      <BottomBar />
     </div>
   )
 }

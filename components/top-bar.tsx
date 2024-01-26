@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Logout } from '@mui/icons-material'
 import { signOut, useSession } from 'next-auth/react'
-import { redirect, usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 export const TopBar = () => {
   const pathname = usePathname()
@@ -12,10 +12,6 @@ export const TopBar = () => {
   const { data: session } = useSession()
 
   const user = session?.user
-
-  if (user === null) {
-    return redirect('/login')
-  }
 
   const chatsHref = '/chats'
   const contactsHref = '/contacts'

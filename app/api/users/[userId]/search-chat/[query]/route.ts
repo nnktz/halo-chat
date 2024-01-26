@@ -1,4 +1,5 @@
 import Chat from '@/models/chat.model'
+import Message from '@/models/message.model'
 import User from '@/models/user.model'
 import { connectToDB } from '@/utils/mongodb'
 
@@ -13,6 +14,11 @@ export async function GET(req: Request, { params }: { params: { query: string; u
       name: { $regex: query, $options: 'i' },
     })
       .populate({ path: 'members', model: User })
+      .populate({
+        path: 'messages',
+        model: Message,
+        populate: { path: 'sender seenBy', model: User },
+      })
       .exec()
 
     return new Response(JSON.stringify(search), { status: 200 })
